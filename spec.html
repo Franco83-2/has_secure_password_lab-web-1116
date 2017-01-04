@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <title>RSpec results</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Expires" content="-1" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <style type="text/css">
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    font-size: 80%;
+  }
+  </style>
+  <script type="text/javascript">
+    // <![CDATA[
+
+function addClass(element_id, classname) {
+  document.getElementById(element_id).className += (" " + classname);
+}
+
+function removeClass(element_id, classname) {
+  var elem = document.getElementById(element_id);
+  var classlist = elem.className.replace(classname,'');
+  elem.className = classlist;
+}
+
+function moveProgressBar(percentDone) {
+  document.getElementById("rspec-header").style.width = percentDone +"%";
+}
+
+function makeRed(element_id) {
+  removeClass(element_id, 'passed');
+  removeClass(element_id, 'not_implemented');
+  addClass(element_id,'failed');
+}
+
+function makeYellow(element_id) {
+  var elem = document.getElementById(element_id);
+  if (elem.className.indexOf("failed") == -1) {  // class doesn't includes failed
+    if (elem.className.indexOf("not_implemented") == -1) { // class doesn't include not_implemented
+      removeClass(element_id, 'passed');
+      addClass(element_id,'not_implemented');
+    }
+  }
+}
+
+function apply_filters() {
+  var passed_filter = document.getElementById('passed_checkbox').checked;
+  var failed_filter = document.getElementById('failed_checkbox').checked;
+  var pending_filter = document.getElementById('pending_checkbox').checked;
+
+  assign_display_style("example passed", passed_filter);
+  assign_display_style("example failed", failed_filter);
+  assign_display_style("example not_implemented", pending_filter);
+
+  assign_display_style_for_group("example_group passed", passed_filter);
+  assign_display_style_for_group("example_group not_implemented", pending_filter, pending_filter || passed_filter);
+  assign_display_style_for_group("example_group failed", failed_filter, failed_filter || pending_filter || passed_filter);
+}
+
+function get_display_style(display_flag) {
+  var style_mode = 'none';
+  if (display_flag == true) {
+    style_mode = 'block';
+  }
+  return style_mode;
+}
+
+function assign_display_style(classname, display_flag) {
+  var style_mode = get_display_style(display_flag);
+  var elems = document.getElementsByClassName(classname)
+  for (var i=0; i<elems.length;i++) {
+    elems[i].style.display = style_mode;
+  }
+}
+
+function assign_display_style_for_group(classname, display_flag, subgroup_flag) {
+  var display_style_mode = get_display_style(display_flag);
+  var subgroup_style_mode = get_display_style(subgroup_flag);
+  var elems = document.getElementsByClassName(classname)
+  for (var i=0; i<elems.length;i++) {
+    var style_mode = display_style_mode;
+    if ((display_flag != subgroup_flag) && (elems[i].getElementsByTagName('dt')[0].innerHTML.indexOf(", ") != -1)) {
+      elems[i].style.display = subgroup_style_mode;
+    } else {
+      elems[i].style.display = display_style_mode;
+    }
+  }
+}
+
+    // ]]>
+  </script>
+  <style type="text/css">
+#rspec-header {
+  background: #65C400; color: #fff; height: 4em;
+}
+
+.rspec-report h1 {
+  margin: 0px 10px 0px 10px;
+  padding: 10px;
+  font-family: "Lucida Grande", Helvetica, sans-serif;
+  font-size: 1.8em;
+  position: absolute;
+}
+
+#label {
+  float:left;
+}
+
+#display-filters {
+  float:left;
+  padding: 28px 0 0 40%;
+  font-family: "Lucida Grande", Helvetica, sans-serif;
+}
+
+#summary {
+  float:right;
+  padding: 5px 10px;
+  font-family: "Lucida Grande", Helvetica, sans-serif;
+  text-align: right;
+}
+
+#summary p {
+  margin: 0 0 0 2px;
+}
+
+#summary #totals {
+  font-size: 1.2em;
+}
+
+.example_group {
+  margin: 0 10px 5px;
+  background: #fff;
+}
+
+dl {
+  margin: 0; padding: 0 0 5px;
+  font: normal 11px "Lucida Grande", Helvetica, sans-serif;
+}
+
+dt {
+  padding: 3px;
+  background: #65C400;
+  color: #fff;
+  font-weight: bold;
+}
+
+dd {
+  margin: 5px 0 5px 5px;
+  padding: 3px 3px 3px 18px;
+}
+
+dd .duration {
+  padding-left: 5px;
+  text-align: right;
+  right: 0px;
+  float:right;
+}
+
+dd.example.passed {
+  border-left: 5px solid #65C400;
+  border-bottom: 1px solid #65C400;
+  background: #DBFFB4; color: #3D7700;
+}
+
+dd.example.not_implemented {
+  border-left: 5px solid #FAF834;
+  border-bottom: 1px solid #FAF834;
+  background: #FCFB98; color: #131313;
+}
+
+dd.example.pending_fixed {
+  border-left: 5px solid #0000C2;
+  border-bottom: 1px solid #0000C2;
+  color: #0000C2; background: #D3FBFF;
+}
+
+dd.example.failed {
+  border-left: 5px solid #C20000;
+  border-bottom: 1px solid #C20000;
+  color: #C20000; background: #FFFBD3;
+}
+
+
+dt.not_implemented {
+  color: #000000; background: #FAF834;
+}
+
+dt.pending_fixed {
+  color: #FFFFFF; background: #C40D0D;
+}
+
+dt.failed {
+  color: #FFFFFF; background: #C40D0D;
+}
+
+
+#rspec-header.not_implemented {
+  color: #000000; background: #FAF834;
+}
+
+#rspec-header.pending_fixed {
+  color: #FFFFFF; background: #C40D0D;
+}
+
+#rspec-header.failed {
+  color: #FFFFFF; background: #C40D0D;
+}
+
+
+.backtrace {
+  color: #000;
+  font-size: 12px;
+}
+
+a {
+  color: #BE5C00;
+}
+
+/* Ruby code, style similar to vibrant ink */
+.ruby {
+  font-size: 12px;
+  font-family: monospace;
+  color: white;
+  background-color: black;
+  padding: 0.1em 0 0.2em 0;
+}
+
+.ruby .keyword { color: #FF6600; }
+.ruby .constant { color: #339999; }
+.ruby .attribute { color: white; }
+.ruby .global { color: white; }
+.ruby .module { color: white; }
+.ruby .class { color: white; }
+.ruby .string { color: #66FF00; }
+.ruby .ident { color: white; }
+.ruby .method { color: #FFCC00; }
+.ruby .number { color: white; }
+.ruby .char { color: white; }
+.ruby .comment { color: #9933CC; }
+.ruby .symbol { color: white; }
+.ruby .regex { color: #44B4CC; }
+.ruby .punct { color: white; }
+.ruby .escape { color: white; }
+.ruby .interp { color: white; }
+.ruby .expr { color: white; }
+
+.ruby .offending { background-color: gray; }
+.ruby .linenum {
+  width: 75px;
+  padding: 0.1em 1em 0.2em 0;
+  color: #000000;
+  background-color: #FFFBD3;
+}
+
+  </style>
+</head>
+<body>
+<div class="rspec-report">
+
+<div id="rspec-header">
+  <div id="label">
+    <h1>RSpec Code Examples</h1>
+  </div>
+
+  <div id="display-filters">
+    <input id="passed_checkbox"  name="passed_checkbox"  type="checkbox" checked="checked" onchange="apply_filters()" value="1" /> <label for="passed_checkbox">Passed</label>
+    <input id="failed_checkbox"  name="failed_checkbox"  type="checkbox" checked="checked" onchange="apply_filters()" value="2" /> <label for="failed_checkbox">Failed</label>
+    <input id="pending_checkbox" name="pending_checkbox" type="checkbox" checked="checked" onchange="apply_filters()" value="3" /> <label for="pending_checkbox">Pending</label>
+  </div>
+
+  <div id="summary">
+    <p id="totals">&#160;</p>
+    <p id="duration">&#160;</p>
+  </div>
+</div>
+
+
+<div class="results">
+<div id="div_group_1" class="example_group passed">
+  <dl style="margin-left: 0px;">
+  <dt id="example_group_1" class="passed">SessionsController</dt>
+  </dl>
+</div>
+<div id="div_group_2" class="example_group passed">
+  <dl style="margin-left: 15px;">
+  <dt id="example_group_2" class="passed">post create</dt>
+    <script type="text/javascript">moveProgressBar('6.6');</script>
+    <dd class="example passed"><span class="passed_spec_name">logs you in with the correct password</span><span class='duration'>0.02580s</span></dd>
+    <script type="text/javascript">moveProgressBar('13.3');</script>
+    <dd class="example passed"><span class="passed_spec_name">rejects invalid passwords</span><span class='duration'>0.00417s</span></dd>
+    <script type="text/javascript">moveProgressBar('20.0');</script>
+    <dd class="example passed"><span class="passed_spec_name">rejects empty passwords</span><span class='duration'>0.00410s</span></dd>
+  </dl>
+</div>
+<div id="div_group_3" class="example_group passed">
+  <dl style="margin-left: 0px;">
+  <dt id="example_group_3" class="passed">UsersController</dt>
+  </dl>
+</div>
+<div id="div_group_4" class="example_group passed">
+  <dl style="margin-left: 15px;">
+  <dt id="example_group_4" class="passed">create</dt>
+    <script type="text/javascript">makeRed('rspec-header');</script>
+    <script type="text/javascript">makeRed('div_group_4');</script>
+    <script type="text/javascript">makeRed('example_group_4');</script>
+    <script type="text/javascript">moveProgressBar('26.6');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">creates a new user</span>
+      <span class="duration">0.00980s</span>
+      <div class="failure" id="failure_1">
+        <div class="message"><pre>Missing template users/create, application/create with {:locale=&gt;[:en], :formats=&gt;[:html], :variants=&gt;[], :handlers=&gt;[:erb, :builder, :raw, :ruby, :coffee, :jbuilder]}. Searched in:
+  * &quot;#&lt;RSpec::Rails::ViewRendering::EmptyTemplatePathSetDecorator:0x007fbec6c294d0&gt;&quot;
+</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/path_set.rb:46:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/lookup_context.rb:121:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/abstract_renderer.rb:18:in `find_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:40:in `determine_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:8:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:42:in `render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:23:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:100:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/streaming.rb:217:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:83:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:32:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/renderers.rb:37:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/rendering.rb:25:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:16:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block (2 levels) in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `block in ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:87:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:25:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:43:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:10:in `default_render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:5:in `send_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:198:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:10:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:20:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:117:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:555:in `block (2 levels) in compile&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:505:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:92:in `_run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:776:in `_run_process_action_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:81:in `run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:19:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rescue.rb:29:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:32:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `block in instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications/instrumenter.rb:20:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:30:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/params_wrapper.rb:250:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:18:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:137:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:30:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:632:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:65:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:514:in `post&#39;
+./spec/controllers/users_controller_spec.rb:11:in `block (3 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">44</span>
+<span class="linenum">45</span>    <span class="keyword">def</span> <span class="function">find</span>(*args)
+<span class="offending"><span class="linenum">46</span>      find_all(*args).first || raise(<span class="constant">MissingTemplate</span>.new(<span class="predefined-constant">self</span>, *args))</span>
+<span class="linenum">47</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('33.3');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">logs you in</span>
+      <span class="duration">0.00220s</span>
+      <div class="failure" id="failure_2">
+        <div class="message"><pre>Missing template users/create, application/create with {:locale=&gt;[:en], :formats=&gt;[:html], :variants=&gt;[], :handlers=&gt;[:erb, :builder, :raw, :ruby, :coffee, :jbuilder]}. Searched in:
+  * &quot;#&lt;RSpec::Rails::ViewRendering::EmptyTemplatePathSetDecorator:0x007fbec6d9b1d8&gt;&quot;
+</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/path_set.rb:46:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/lookup_context.rb:121:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/abstract_renderer.rb:18:in `find_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:40:in `determine_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:8:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:42:in `render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:23:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:100:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/streaming.rb:217:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:83:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:32:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/renderers.rb:37:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/rendering.rb:25:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:16:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block (2 levels) in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `block in ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:87:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:25:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:43:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:10:in `default_render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:5:in `send_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:198:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:10:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:20:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:117:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:555:in `block (2 levels) in compile&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:505:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:92:in `_run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:776:in `_run_process_action_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:81:in `run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:19:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rescue.rb:29:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:32:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `block in instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications/instrumenter.rb:20:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:30:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/params_wrapper.rb:250:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:18:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:137:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:30:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:632:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:65:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:514:in `post&#39;
+./spec/controllers/users_controller_spec.rb:16:in `block (3 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">44</span>
+<span class="linenum">45</span>    <span class="keyword">def</span> <span class="function">find</span>(*args)
+<span class="offending"><span class="linenum">46</span>      find_all(*args).first || raise(<span class="constant">MissingTemplate</span>.new(<span class="predefined-constant">self</span>, *args))</span>
+<span class="linenum">47</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('40.0');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">sets your password if the confirmation matches</span>
+      <span class="duration">0.00206s</span>
+      <div class="failure" id="failure_3">
+        <div class="message"><pre>Missing template users/create, application/create with {:locale=&gt;[:en], :formats=&gt;[:html], :variants=&gt;[], :handlers=&gt;[:erb, :builder, :raw, :ruby, :coffee, :jbuilder]}. Searched in:
+  * &quot;#&lt;RSpec::Rails::ViewRendering::EmptyTemplatePathSetDecorator:0x007fbec6dd9eb0&gt;&quot;
+</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/path_set.rb:46:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/lookup_context.rb:121:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/abstract_renderer.rb:18:in `find_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:40:in `determine_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:8:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:42:in `render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:23:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:100:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/streaming.rb:217:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:83:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:32:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/renderers.rb:37:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/rendering.rb:25:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:16:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block (2 levels) in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `block in ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:87:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:25:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:43:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:10:in `default_render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:5:in `send_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:198:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:10:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:20:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:117:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:555:in `block (2 levels) in compile&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:505:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:92:in `_run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:776:in `_run_process_action_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:81:in `run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:19:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rescue.rb:29:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:32:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `block in instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications/instrumenter.rb:20:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:30:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/params_wrapper.rb:250:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:18:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:137:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:30:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:632:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:65:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:514:in `post&#39;
+./spec/controllers/users_controller_spec.rb:21:in `block (3 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">44</span>
+<span class="linenum">45</span>    <span class="keyword">def</span> <span class="function">find</span>(*args)
+<span class="offending"><span class="linenum">46</span>      find_all(*args).first || raise(<span class="constant">MissingTemplate</span>.new(<span class="predefined-constant">self</span>, *args))</span>
+<span class="linenum">47</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('46.6');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">redirects you if your password and confirmation don&#39;t match</span>
+      <span class="duration">0.00210s</span>
+      <div class="failure" id="failure_4">
+        <div class="message"><pre>Missing template users/create, application/create with {:locale=&gt;[:en], :formats=&gt;[:html], :variants=&gt;[], :handlers=&gt;[:erb, :builder, :raw, :ruby, :coffee, :jbuilder]}. Searched in:
+  * &quot;#&lt;RSpec::Rails::ViewRendering::EmptyTemplatePathSetDecorator:0x007fbec0b0a668&gt;&quot;
+</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/path_set.rb:46:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/lookup_context.rb:121:in `find&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/abstract_renderer.rb:18:in `find_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:40:in `determine_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/template_renderer.rb:8:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:42:in `render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/renderer/renderer.rb:23:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:100:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/streaming.rb:217:in `_render_template&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:83:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:32:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/renderers.rb:37:in `render_to_body&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/rendering.rb:25:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:16:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block (2 levels) in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `block in ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/core_ext/benchmark.rb:12:in `ms&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:44:in `block in render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:87:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:25:in `cleanup_view_runtime&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:43:in `render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:10:in `default_render&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/implicit_render.rb:5:in `send_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:198:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rendering.rb:10:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:20:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:117:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:555:in `block (2 levels) in compile&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:505:in `call&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:92:in `_run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:776:in `_run_process_action_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/callbacks.rb:81:in `run_callbacks&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/callbacks.rb:19:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/rescue.rb:29:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:32:in `block in process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `block in instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications/instrumenter.rb:20:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activesupport-4.2.2/lib/active_support/notifications.rb:164:in `instrument&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/instrumentation.rb:30:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/metal/params_wrapper.rb:250:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activerecord-4.2.2/lib/active_record/railties/controller_runtime.rb:18:in `process_action&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/abstract_controller/base.rb:137:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionview-4.2.2/lib/action_view/rendering.rb:30:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:632:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:65:in `process&#39;
+/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/actionpack-4.2.2/lib/action_controller/test_case.rb:514:in `post&#39;
+./spec/controllers/users_controller_spec.rb:27:in `block (3 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">44</span>
+<span class="linenum">45</span>    <span class="keyword">def</span> <span class="function">find</span>(*args)
+<span class="offending"><span class="linenum">46</span>      find_all(*args).first || raise(<span class="constant">MissingTemplate</span>.new(<span class="predefined-constant">self</span>, *args))</span>
+<span class="linenum">47</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+  </dl>
+</div>
+<div id="div_group_5" class="example_group passed">
+  <dl style="margin-left: 0px;">
+  <dt id="example_group_5" class="passed">User</dt>
+    <script type="text/javascript">moveProgressBar('53.3');</script>
+    <dd class="example passed"><span class="passed_spec_name">has a password field</span><span class='duration'>0.00176s</span></dd>
+    <script type="text/javascript">moveProgressBar('60.0');</script>
+    <dd class="example passed"><span class="passed_spec_name">has a name field</span><span class='duration'>0.00047s</span></dd>
+    <script type="text/javascript">makeRed('div_group_5');</script>
+    <script type="text/javascript">makeRed('example_group_5');</script>
+    <script type="text/javascript">moveProgressBar('66.6');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">has a password confirmation field</span>
+      <span class="duration">0.01070s</span>
+      <div class="failure" id="failure_5">
+        <div class="message"><pre>expected #&lt;User id: nil, name: nil, password: nil, created_at: nil, updated_at: nil&gt; to respond to :password_confirmation</pre></div>
+        <div class="backtrace"><pre>./spec/models/user_spec.rb:13:in `block (2 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">11</span>
+<span class="linenum">12</span>  it <span class="string"><span class="delimiter">'</span><span class="content">has a password confirmation field</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+<span class="offending"><span class="linenum">13</span>    expect(<span class="constant">User</span>.new).to respond_to(<span class="symbol">:password_confirmation</span>)</span>
+<span class="linenum">14</span>  <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('73.3');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">is valid if password and password_confirmation match</span>
+      <span class="duration">0.00056s</span>
+      <div class="failure" id="failure_6">
+        <div class="message"><pre>undefined method `password_confirmation=&#39; for #&lt;User:0x007fbec6f70030&gt;
+Did you mean?  password_change</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activemodel-4.2.2/lib/active_model/attribute_methods.rb:433:in `method_missing&#39;
+./spec/models/user_spec.rb:18:in `block (2 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">431</span>      <span class="keyword">else</span>
+<span class="linenum">432</span>        match = match_attribute_method?(method.to_s)
+<span class="offending"><span class="linenum">433</span>        match ? attribute_missing(match, *args, &amp;block) : <span class="keyword">super</span></span>
+<span class="linenum">434</span>      <span class="keyword">end</span>
+<span class="linenum">435</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('80.0');</script>
+    <dd class="example passed"><span class="passed_spec_name">is valid if password is set and password_confirmation is nil</span><span class='duration'>0.00142s</span></dd>
+    <script type="text/javascript">moveProgressBar('86.6');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">is invalid if password and password_confirmation are both non-nil and don&#39;t match</span>
+      <span class="duration">0.00048s</span>
+      <div class="failure" id="failure_7">
+        <div class="message"><pre>undefined method `password_confirmation=&#39; for #&lt;User:0x007fbec6fe1320&gt;
+Did you mean?  password_change</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activemodel-4.2.2/lib/active_model/attribute_methods.rb:433:in `method_missing&#39;
+./spec/models/user_spec.rb:31:in `block (2 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">431</span>      <span class="keyword">else</span>
+<span class="linenum">432</span>        match = match_attribute_method?(method.to_s)
+<span class="offending"><span class="linenum">433</span>        match ? attribute_missing(match, *args, &amp;block) : <span class="keyword">super</span></span>
+<span class="linenum">434</span>      <span class="keyword">end</span>
+<span class="linenum">435</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+  </dl>
+</div>
+<div id="div_group_6" class="example_group passed">
+  <dl style="margin-left: 15px;">
+  <dt id="example_group_6" class="passed">authenticate</dt>
+    <script type="text/javascript">makeRed('div_group_6');</script>
+    <script type="text/javascript">makeRed('example_group_6');</script>
+    <script type="text/javascript">moveProgressBar('93.3');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">returns the user if credentials match</span>
+      <span class="duration">0.00072s</span>
+      <div class="failure" id="failure_8">
+        <div class="message"><pre>undefined method `authenticate&#39; for #&lt;User:0x007fbec0f14808&gt;</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activemodel-4.2.2/lib/active_model/attribute_methods.rb:433:in `method_missing&#39;
+./spec/models/user_spec.rb:39:in `block (3 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">431</span>      <span class="keyword">else</span>
+<span class="linenum">432</span>        match = match_attribute_method?(method.to_s)
+<span class="offending"><span class="linenum">433</span>        match ? attribute_missing(match, *args, &amp;block) : <span class="keyword">super</span></span>
+<span class="linenum">434</span>      <span class="keyword">end</span>
+<span class="linenum">435</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('100.0');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">returns falsey if credentials don&#39;t match</span>
+      <span class="duration">0.00063s</span>
+      <div class="failure" id="failure_9">
+        <div class="message"><pre>undefined method `authenticate&#39; for #&lt;User:0x007fbec0f773b8&gt;</pre></div>
+        <div class="backtrace"><pre>/Users/mischasarah/.rvm/gems/ruby-2.3.1/gems/activemodel-4.2.2/lib/active_model/attribute_methods.rb:433:in `method_missing&#39;
+./spec/models/user_spec.rb:45:in `block (3 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">431</span>      <span class="keyword">else</span>
+<span class="linenum">432</span>        match = match_attribute_method?(method.to_s)
+<span class="offending"><span class="linenum">433</span>        match ? attribute_missing(match, *args, &amp;block) : <span class="keyword">super</span></span>
+<span class="linenum">434</span>      <span class="keyword">end</span>
+<span class="linenum">435</span>    <span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+  </dl>
+</div>
+<script type="text/javascript">document.getElementById('duration').innerHTML = "Finished in <strong>0.14943 seconds</strong>";</script>
+<script type="text/javascript">document.getElementById('totals').innerHTML = "15 examples, 9 failures";</script>
+</div>
+</div>
+</body>
+</html>
